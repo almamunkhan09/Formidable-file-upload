@@ -27,24 +27,20 @@ const upload = async (req, res) => {
       if (!(originalFilename && name)) return 0;
       return 1;  // return mimetype && mimetype.includes("image"); uncomment for uploading only image file
     };
+    
     const customOptions = { uploadDir: uploadDir, keepExtensions: true, allowEmptyFiles: false, maxFileSize: 5 * 1024 * 1024 * 1024, multiples: true, filter: filterFunction };
+    
     const form = new IncomingForm(customOptions);
     
-
     form.parse(req, (err, field, file) => {
-      console.log(file)
       if (err) throw err;
-
       if (!file.myfiles) return res.status(401).json({ message: 'No file Selected' });
       file.myfiles.forEach((file) => {
         const newFilepath = `${uploadDir}/${file.originalFilename}`;
         fs.rename(file.filepath, newFilepath, err => err);
       });
       return res.status(200).json({ message: ' File Uploaded ' });
-
-
     });
-
   }
   catch (err) {
     res.status(401).json({ message: 'Error occured', error: err });
